@@ -1,6 +1,6 @@
 # This is workflow runs the UI automated test suite for CPME via GitHub Actions
 
-name: CPME GUI automated test suite
+name: playwright automated test suite
 
 # Controls when the workflow will run
 on:
