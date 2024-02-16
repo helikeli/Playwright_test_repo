@@ -1,0 +1,56 @@
+# This is workflow runs the UI automated test suite for CPME via GitHub Actions
+
+name: CPME GUI automated test suite
+
+# Controls when the workflow will run
+on:
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  
+  run-python-script:
+    # The type of runner that the job will run on
+    runs-on: self-hosted
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v3
+
+      - name: create .venv
+        run: |
+          pip install --upgrade pip
+          python3 -m venv .venv
+              
+      - name: activate .venv 
+        run: |
+          source .venv/bin/activate
+          echo PATH=$PATH >> $GITHUB_ENV
+        
+      - name: install packages
+        run: |
+          pip install playwright
+          pip install pytest
+          pip install pytest-playwright
+          pip install pytest-docs
+          pip install pytest-reporter-html1
+          pip install pytest-sphinx
+          pip install pytest-asyncio
+          pip install pytest-testdox
+          pip list
+      - name: Install the required browsers
+        run: playwright install
+          
+        
+      - name: Run UI tests
+        run: pytest
+        
+      - name: download test tracing results
+        uses: actions/upload-artifact@v3
+        if: always()
+        with:
+          name: playwright-traces
+          path: test-results/**
+      
